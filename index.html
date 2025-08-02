@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookCats</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=IM+Fell+English:ital,wght@0,400;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Inter, -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
+            background: #fafafa;
+            color: #1a1a1a;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .header {
+            padding: 60px 0 40px;
+            text-align: center;
+            border-bottom: 1px solid #e8e8e8;
+            margin-bottom: 60px;
+        }
+
+        .header h1 {
+            font-family: 'IM Fell English', serif;
+            font-size: 48px;
+            font-weight: 400;
+            letter-spacing: 0.02em;
+            margin-bottom: 12px;
+            color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .cat-icon {
+            width: 55px;
+            height: 55px;
+            display: inline-block;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1));
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .cat-icon:hover {
+            transform: scale(1.05);
+        }
+
+        .header p {
+            font-family: 'IM Fell English', serif;
+            font-size: 20px;
+            color: #666;
+            font-weight: 400;
+            font-style: italic;
+        }
+
+        .admin-access {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: rgba(26, 26, 26, 0.8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 999;
+        }
+
+        .admin-access:hover {
+            opacity: 1;
+            background: rgba(26, 26, 26, 1);
+        }
+
+        .admin-access svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        .admin-section {
+            background: white;
+            border: 1px solid #e8e8e8;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 60px;
+            display: none;
+        }
+
+        .admin-section.visible {
+            display: block;
+        }
+
+        .admin-title {
+            font-family: 'IM Fell English', serif;
+            font-size: 28px;
+            font-weight: 400;
+            margin-bottom: 24px;
+            color: #1a1a1a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-admin {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .close-admin:hover {
+            background: #c82333;
+        }
+
+        .upload-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .form-section h3 {
+            font-family: 'IM Fell English', serif;
+            font-size: 22px;
+            font-weight: 400;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #d1d1d1;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            background: white;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #007aff;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn-primary {
+            background: #1a1a1a;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background: #333;
+        }
+
+        .preview-card {
+            border: 1px solid #e8e8e8;
+            border-radius: 12px;
+            overflow: hidden;
+            background: white;
+        }
+
+        .search-section {
+            margin-bottom: 40px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 1px solid #d1d1d1;
+            border-radius: 12px;
+            font-size: 16px;
+            background: white;
+            margin-bottom: 24px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #007aff;
+        }
+
+        .filters {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 1px solid #d1d1d1;
+            background: white;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 400;
+        }
+
+        .filter-btn.active,
+        .filter-btn:hover {
+            background: #1a1a1a;
+            color: white;
+            border-color: #1a1a1a;
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 32px;
+            margin-bottom: 60px;
+        }
+
+        .book-card {
+            background: white;
+            border: 1px solid #e8e8e8;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: box-shadow 0.3s ease, transform 0.2s ease;
+        }
+
+        .book-card:hover {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+
+        .book-cover {
+            width: 100%;
+            height: 200px;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 600;
+            color: #666;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .book-info {
+            padding: 24px;
+        }
+
+        .book-title {
+            font-family: 'IM Fell English', serif;
+            font-size: 20px;
+            font-weight: 400;
+            margin-bottom: 6px;
+            color: #1a1a1a;
+            line-height: 1.3;
+        }
+
+        .book-author {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+            font-style: italic;
+        }
+
+        .book-category {
+            display: inline-block;
+            font-size: 12px;
+            color: #007aff;
+            background: #f0f8ff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .book-description {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.4;
+            margin-bottom: 16px;
+        }
+
+        .book-meta {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 16px;
+        }
+
+        .book-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-download {
+            flex: 1;
+            background: #1a1a1a;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-download:hover {
+            background: #333;
+        }
+
+        .btn-preview {
+            background: white;
+            color: #1a1a1a;
+            border: 1px solid #d1d1d1;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-preview:hover {
+            background: #f5f5f5;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-delete:hover {
+            background: #c82333;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #e8e8e8;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'IM Fell English', serif;
+            font-size: 36px;
+            font-weight: 400;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            font-weight: 400;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal h2 {
+            font-family: 'IM Fell English', serif;
+            font-size: 28px;
+            font-weight: 400;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+        }
+
+        /* Login Modal Styles */
+        .login-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .login-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .login-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 16px;
+            background: #1a1a1a;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-icon svg {
+            width: 30px;
+            height: 30px;
+            fill: white;
+        }
+
+        .login-title {
+            font-family: 'IM Fell English', serif;
+            font-size: 24px;
+            font-weight: 400;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .login-subtitle {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .login-input {
+            padding: 16px;
+            border: 2px solid #e8e8e8;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.2s ease;
+        }
+
+        .login-input:focus {
+            outline: none;
+            border-color: #1a1a1a;
+        }
+
+        .login-btn {
+            background: #1a1a1a;
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .login-btn:hover {
+            background: #333;
+        }
+
+        .login-error {
+            color: #dc3545;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 12px;
+            display: none;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #666;
+        }
+
+        .empty-state h3 {
+            font-family: 'IM Fell English', serif;
+            font-size: 24px;
+            font-weight: 400;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+        }
+
+        .admin-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: none;
+            z-index: 999;
+        }
+
+        .admin-indicator.visible {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 16px;
+            }
+            
+            .header h1 {
+                font-size: 36px;
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .cat-icon {
+                width: 45px;
+                height: 45px;
+            }
+            
+            .upload-grid {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+            
+            .books-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            
+            .filters {
+                gap: 8px;
+            }
+            
+            .filter-btn {
+                font-size: 13px;
+                padding: 6px 12px;
+            }
+
+            .login-content {
+                padding: 32px 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-indicator" id="adminIndicator">
+        Modo Administrador Activo
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>
+                <svg class="cat-icon" id="catIcon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Gato negro con ojos amarillos -->
+                    <g>
+                        <!-- Cuerpo del gato -->
+                        <ellipse cx="50" cy="65" rx="20" ry="15" fill="#1a1a1a"/>
+                        
+                        <!-- Cabeza del gato -->
+                        <circle cx="50" cy="40" r="18" fill="#1a1a1a"/>
+                        
+                        <!-- Orejas -->
+                        <path d="M35 30 L40 15 L45 30 Z" fill="#1a1a1a"/>
+                        <path d="M55 30 L60 15 L65 30 Z" fill="#1a1a1a"/>
+                        <path d="M37 28 L40 20 L43 28 Z" fill="#ff6b6b"/>
+                        <path d="M57 28 L60 20 L63 28 Z" fill="#ff6b6b"/>
+                        
+                        <!-- Ojos amarillos -->
+                        <ellipse cx="43" cy="38" rx="4" ry="5" fill="#ffeb3b"/>
+                        <ellipse cx="57" cy="38" rx="4" ry="5" fill="#ffeb3b"/>
+                        <ellipse cx="43" cy="38" rx="2" ry="3" fill="#1a1a1a"/>
+                        <ellipse cx="57" cy="38" rx="2" ry="3" fill="#1a1a1a"/>
+                        
+                        <!-- Nariz -->
+                        <path d="M48 45 L50 42 L52 45 Z" fill="#ff6b6b"/>
+                        
+                        <!-- Boca -->
+                        <path d="M50 46 Q45 50 40 48" stroke="#1a1a1a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                        <path d="M50 46 Q55 50 60 48" stroke="#1a1a1a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                        
+                        <!-- Bigotes -->
+                        <line x1="25" y1="42" x2="35" y2="40" stroke="#1a1a1a" stroke-width="1"/>
+                        <line x1="25" y1="46" x2="35" y2="46" stroke="#1a1a1a" stroke-width="1"/>
+                        <line x1="65" y1="40" x2="75" y2="42" stroke="#1a1a1a" stroke-width="1"/>
+                        <line x1="65" y1="46" x2="75" y2="46" stroke="#1a1a1a" stroke-width="1"/>
+                        
+                        <!-- Cola -->
+                        <path d="M70 65 Q75 50 78 40 Q80 45 75 55 Q72 65 70 65" fill="#1a1a1a"/>
+                        
+                        <!-- Patas -->
+                        <ellipse cx="40" cy="78" rx="3" ry="6" fill="#1a1a1a"/>
+                        <ellipse cx="50" cy="78" rx="3" ry="6" fill="#1a1a1a"/>
+                        <ellipse cx="60" cy="78" rx="3" ry="6" fill="#1a1a1a"/>
+                    </g>
+                </svg>
+                BookCats
+            </h1>
+            <p>Discover & Download Free Books in PDF and EPUB Formats</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalBooks">0</div>
+                <div class="stat-label">Libros disponibles</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalDownloads">0</div>
+                <div class="stat-label">Descargas totales</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalCategories">0</div>
+                <div class="stat-label">Categorías</div>
+            </div>
+        </div>
+
+        <div class="admin-section" id="adminSection">
+            <h2 class="admin-title">
+                Panel de Administración
+                <button class="close-admin" onclick="library.closeAdmin()">Cerrar Panel</button>
+            </h2>
+            <div class="upload-grid">
+                <div class="form-section">
+                    <h3>Agregar nuevo libro</h3>
+                    <form id="uploadForm">
+                        <div class="form-group">
+                            <label>Título</label>
+                            <input type="text" id="bookTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Autor</label>
+                            <input type="text" id="bookAuthor" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Categoría</label>
+                            <select id="bookCategory" required>
+                                <option value="">Seleccionar categoría</option>
+                                <option value="ficcion">Ficción</option>
+                                <option value="no-ficcion">No ficción</option>
+                                <option value="ciencia">Ciencia</option>
+                                <option value="historia">Historia</option>
+                                <option value="tecnologia">Tecnología</option>
+                                <option value="romance">Romance</option>
+                                <option value="fantasia">Fantasía</option>
+                                <option value="misterio">Misterio</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Descripción</label>
+                            <textarea id="bookDescription" placeholder="Breve descripción del libro..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Archivo (PDF/EPUB)</label>
+                            <input type="file" id="bookFile" accept=".pdf,.epub" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Portada (opcional)</label>
+                            <input type="file" id="bookCover" accept="image/*">
+                        </div>
+                        <button type="submit" class="btn-primary">Agregar libro</button>
+                    </form>
+                </div>
+                <div class="form-section">
+                    <h3>Vista previa</h3>
+                    <div id="bookPreview">
+                        <div class="preview-card">
+                            <div class="book-cover">
+                                <span>Portada</span>
+                            </div>
+                            <div class="book-info">
+                                <div class="book-title">Título del libro</div>
+                                <div class="book-author">Nombre del autor</div>
+                                <div class="book-category">Categoría</div>
+                                <div class="book-description">La descripción aparecerá aquí...</div>
+                                <div class="book-actions">
+                                    <button class="btn-download">Descargar</button>
+                                    <button class="btn-preview">Vista previa</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="search-section">
+            <input type="text" class="search-input" id="searchBar" placeholder="Buscar por título, autor o categoría...">
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">Todos</button>
+                <button class="filter-btn" data-filter="ficcion">Ficción</button>
+                <button class="filter-btn" data-filter="no-ficcion">No ficción</button>
+                <button class="filter-btn" data-filter="ciencia">Ciencia</button>
+                <button class="filter-btn" data-filter="tecnologia">Tecnología</button>
+                <button class="filter-btn" data-filter="romance">Romance</button>
+                <button class="filter-btn" data-filter="fantasia">Fantasía</button>
+            </div>
+        </div>
+
+        <div class="books-grid" id="booksGrid">
+            <!-- Los libros se cargarán aquí -->
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="login-modal" id="loginModal">
+        <div class="login-content">
+            <div class="login-header">
+                <div class="login-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M12,7C13.4,7 14.5,8.1 14.5,9.5V10.5H16V16H8V10.5H9.5V9.5C9.5,8.1 10.6,7 12,7M12,8.2C11.2,8.2 10.7,8.7 10.7,9.5V10.5H13.3V9.5C13.3,8.7 12.8,8.2 12,8.2Z"/>
+                    </svg>
+                </div>
+                <h2 class="login-title">Acceso Administrador</h2>
+                <p class="login-subtitle">Ingresa tus credenciales para continuar</p>
+            </div>
+            <form class="login-form" id="loginForm">
+                <input type="text" class="login-input" id="username" placeholder="Nombre de usuario" required>
+                <input type="password" class="login-input" id="password" placeholder="Contraseña" required>
+                <button type="submit" class="login-btn">Iniciar Sesión</button>
+                <div class="login-error" id="loginError">
+                    Credenciales incorrectas. Inténtalo de nuevo.
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div class="modal" id="previewModal">
+        <div class="modal-content">
+            <h2>Información del libro</h2>
+            <div id="previewContent"></div>
+            <button class="btn-primary" onclick="closeModal()" style="margin-top: 20px;">Cerrar</button>
+        </div>
+    </div>
+
+    <script>
+        class VirtualLibrary {
+            constructor() {
+                this.books = this.loadBooks();
+                this.downloadCount = parseInt(sessionStorage.getItem('downloadCount') || '0');
+                this.isAdminVisible = false;
+                this.isAdminAuthenticated = sessionStorage.getItem('bookCatsAdmin') === 'authenticated';
+                this.adminCredentials = {
+                    username: 'Marcie290406',
+                    password: 'CatBooks#2024$Secure'
+                };
+                this.init();
+            }
+
+            init() {
+                this.renderBooks();
+                this.updateStats();
+                this.setupEventListeners();
+                this.loadSampleBooks();
+                this.updateAdminIndicator();
+            }
+
+            setupEventListeners() {
+                // Cat icon click event
+                document.getElementById('catIcon').addEventListener('click', () => {
+                    this.handleCatClick();
+                });
+
+                // Login form
+                document.getElementById('loginForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleLogin();
+                });
+
+                // Upload form
+                document.getElementById('uploadForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    if (this.isAdminAuthenticated && this.isAdminVisible) {
+                        this.uploadBook();
+                    }
+                });
+
+                // Search functionality
+                document.getElementById('searchBar').addEventListener('input', (e) => {
+                    this.searchBooks(e.target.value);
+                });
+
+                // Filter buttons
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.filterBooks(e.target.dataset.filter);
+                    });
+                });
+
+                // Preview updates
+                ['bookTitle', 'bookAuthor', 'bookCategory', 'bookDescription'].forEach(id => {
+                    document.getElementById(id).addEventListener('input', () => {
+                        if (this.isAdminAuthenticated && this.isAdminVisible) {
+                            this.updatePreview();
+                        }
+                    });
+                });
+
+                document.getElementById('bookCover').addEventListener('change', (e) => {
+                    if (this.isAdminAuthenticated && this.isAdminVisible) {
+                        this.previewCoverImage(e.target.files[0]);
+                    }
+                });
+
+                // Close modal when clicking outside
+                document.getElementById('loginModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'loginModal') {
+                        this.closeLoginModal();
+                    }
+                });
+            }
+
+            handleCatClick() {
+                if (this.isAdminAuthenticated) {
+                    // Si ya está autenticado, alternar panel
+                    this.toggleAdminPanel();
+                } else {
+                    // Si no está autenticado, mostrar login
+                    this.showLoginModal();
+                }
+            }
+
+            showLoginModal() {
+                document.getElementById('loginModal').style.display = 'block';
+                document.getElementById('username').focus();
+            }
+
+            closeLoginModal() {
+                document.getElementById('loginModal').style.display = 'none';
+                document.getElementById('loginError').style.display = 'none';
+                document.getElementById('loginForm').reset();
+            }
+
+            handleLogin() {
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                const errorElement = document.getElementById('loginError');
+
+                if (username === this.adminCredentials.username && password === this.adminCredentials.password) {
+                    // Login exitoso
+                    this.isAdminAuthenticated = true;
+                    sessionStorage.setItem('bookCatsAdmin', 'authenticated');
+                    this.closeLoginModal();
+                    this.showAdminPanel();
+                    this.updateAdminIndicator();
+                } else {
+                    // Login fallido
+                    errorElement.style.display = 'block';
+                    document.getElementById('password').value = '';
+                    document.getElementById('password').focus();
+                }
+            }
+
+            toggleAdminPanel() {
+                if (this.isAdminVisible) {
+                    this.closeAdmin();
+                } else {
+                    this.showAdminPanel();
+                }
+            }
+
+            showAdminPanel() {
+                if (!this.isAdminAuthenticated) return;
+                
+                this.isAdminVisible = true;
+                document.getElementById('adminSection').classList.add('visible');
+                document.getElementById('adminIndicator').classList.add('visible');
+            }
+
+            closeAdmin() {
+                this.isAdminVisible = false;
+                document.getElementById('adminSection').classList.remove('visible');
+            }
+
+            updateAdminIndicator() {
+                if (this.isAdminAuthenticated) {
+                    document.getElementById('adminIndicator').classList.add('visible');
+                } else {
+                    document.getElementById('adminIndicator').classList.remove('visible');
+                }
+            }
+
+            loadBooks() {
+                const savedBooks = sessionStorage.getItem('libraryBooks');
+                return savedBooks ? JSON.parse(savedBooks) : [];
+            }
+
+            saveBooks() {
+                sessionStorage.setItem('libraryBooks', JSON.stringify(this.books));
+            }
+
+            updatePreview() {
+                const title = document.getElementById('bookTitle').value || 'Título del libro';
+                const author = document.getElementById('bookAuthor').value || 'Nombre del autor';
+                const category = document.getElementById('bookCategory').value || 'Categoría';
+                const description = document.getElementById('bookDescription').value || 'La descripción aparecerá aquí...';
+
+                const preview = document.querySelector('#bookPreview .preview-card');
+                preview.querySelector('.book-title').textContent = title;
+                preview.querySelector('.book-author').textContent = author;
+                preview.querySelector('.book-category').textContent = category;
+                preview.querySelector('.book-description').textContent = description;
+            }
+
+            previewCoverImage(file) {
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const coverElement = document.querySelector('#bookPreview .book-cover');
+                        coverElement.style.backgroundImage = `url(${e.target.result})`;
+                        coverElement.innerHTML = '';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+
+            uploadBook() {
+                const title = document.getElementById('bookTitle').value;
+                const author = document.getElementById('bookAuthor').value;
+                const category = document.getElementById('bookCategory').value;
+                const description = document.getElementById('bookDescription').value;
+                const fileInput = document.getElementById('bookFile');
+                const coverInput = document.getElementById('bookCover');
+
+                if (!fileInput.files[0]) {
+                    alert('Selecciona un archivo');
+                    return;
+                }
+
+                const file = fileInput.files[0];
+                const fileReader = new FileReader();
+
+                fileReader.onload = (e) => {
+                    let coverImage = null;
+                    
+                    const processBook = () => {
+                        const book = {
+                            id: Date.now(),
+                            title,
+                            author,
+                            category,
+                            description,
+                            fileData: e.target.result,
+                            fileName: file.name,
+                            fileType: file.type,
+                            coverImage,
+                            uploadDate: new Date().toLocaleDateString(),
+                            downloads: 0
+                        };
+
+                        this.books.push(book);
+                        this.saveBooks();
+                        this.renderBooks();
+                        this.updateStats();
+                        
+                        // Reset form
+                        document.getElementById('uploadForm').reset();
+                        this.resetPreview();
+                        
+                        alert('Libro agregado exitosamente!');
+                    };
+
+                    if (coverInput.files[0]) {
+                        const coverReader = new FileReader();
+                        coverReader.onload = (e) => {
+                            coverImage = e.target.result;
+                            processBook();
+                        };
+                        coverReader.readAsDataURL(coverInput.files[0]);
+                    } else {
+                        processBook();
+                    }
+                };
+
+                fileReader.readAsDataURL(file);
+            }
+
+            resetPreview() {
+                const preview = document.querySelector('#bookPreview .preview-card');
+                const coverElement = preview.querySelector('.book-cover');
+                
+                coverElement.style.backgroundImage = '';
+                coverElement.innerHTML = '<span>Portada</span>';
+                preview.querySelector('.book-title').textContent = 'Título del libro';
+                preview.querySelector('.book-author').textContent = 'Nombre del autor';
+                preview.querySelector('.book-category').textContent = 'Categoría';
+                preview.querySelector('.book-description').textContent = 'La descripción aparecerá aquí...';
+            }
+
+            renderBooks() {
+                const grid = document.getElementById('booksGrid');
+                
+                if (this.books.length === 0) {
+                    grid.innerHTML = `
+                        <div class="empty-state">
+                            <h3>No hay libros disponibles</h3>
+                            <p>Los libros aparecerán aquí cuando se agreguen a la biblioteca.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                grid.innerHTML = this.books.map(book => `
+                    <div class="book-card" data-category="${book.category}">
+                        <div class="book-cover" style="${book.coverImage ? `background-image: url(${book.coverImage})` : ''}">
+                            ${!book.coverImage ? book.title.charAt(0).toUpperCase() : ''}
+                        </div>
+                        <div class="book-info">
+                            <div class="book-title">${book.title}</div>
+                            <div class="book-author">por ${book.author}</div>
+                            <div class="book-category">${book.category}</div>
+                            <div class="book-description">${book.description}</div>
+                            <div class="book-meta">
+                                Subido el ${book.uploadDate} • ${book.downloads} descargas
+                            </div>
+                            <div class="book-actions">
+                                <button class="btn-download" onclick="library.downloadBook(${book.id})">
+                                    Descargar ${book.fileName.split('.').pop().toUpperCase()}
+                                </button>
+                                <button class="btn-preview" onclick="library.previewBook(${book.id})">Vista previa</button>
+                                ${this.isAdminAuthenticated ? `<button class="btn-delete" onclick="library.deleteBook(${book.id})">Eliminar</button>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            downloadBook(bookId) {
+                const book = this.books.find(b => b.id === bookId);
+                if (!book) return;
+
+                // Crear elemento de descarga
+                const link = document.createElement('a');
+                link.href = book.fileData;
+                link.download = book.fileName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Incrementar contador de descargas
+                book.downloads++;
+                this.downloadCount++;
+                sessionStorage.setItem('downloadCount', this.downloadCount.toString());
+                this.saveBooks();
+                this.updateStats();
+                this.renderBooks();
+            }
+
+            deleteBook(bookId) {
+                if (!this.isAdminAuthenticated) return;
+                
+                if (confirm('¿Estás seguro de que quieres eliminar este libro?')) {
+                    this.books = this.books.filter(book => book.id !== bookId);
+                    this.saveBooks();
+                    this.renderBooks();
+                    this.updateStats();
+                }
+            }
+
+            previewBook(bookId) {
+                const book = this.books.find(b => b.id === bookId);
+                if (!book) return;
+
+                const modal = document.getElementById('previewModal');
+                const content = document.getElementById('previewContent');
+                
+                content.innerHTML = `
+                    <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+                        ${book.coverImage ? `<img src="${book.coverImage}" style="width: 120px; height: 160px; object-fit: cover; border-radius: 8px;">` : `<div style="width: 120px; height: 160px; background: #f5f5f5; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 600; color: #666;">${book.title.charAt(0)}</div>`}
+                        <div style="flex: 1;">
+                            <h3 style="margin-bottom: 8px; font-family: 'IM Fell English', serif;">${book.title}</h3>
+                            <p style="color: #666; margin-bottom: 8px; font-style: italic;">por ${book.author}</p>
+                            <p style="background: #f0f8ff; color: #007aff; padding: 4px 8px; border-radius: 4px; display: inline-block; font-size: 12px; margin-bottom: 12px;">${book.category}</p>
+                            <p style="margin-bottom: 12px;">${book.description}</p>
+                            <p style="font-size: 12px; color: #999;">
+                                Formato: ${book.fileName.split('.').pop().toUpperCase()} • 
+                                Subido: ${book.uploadDate} • 
+                                Descargas: ${book.downloads}
+                            </p>
+                        </div>
+                    </div>
+                `;
+                
+                modal.style.display = 'block';
+            }
+
+            searchBooks(query) {
+                const cards = document.querySelectorAll('.book-card');
+                const searchTerm = query.toLowerCase();
+
+                cards.forEach(card => {
+                    const title = card.querySelector('.book-title').textContent.toLowerCase();
+                    const author = card.querySelector('.book-author').textContent.toLowerCase();
+                    const category = card.querySelector('.book-category').textContent.toLowerCase();
+                    
+                    const matches = title.includes(searchTerm) || 
+                                  author.includes(searchTerm) || 
+                                  category.includes(searchTerm);
+                    
+                    card.style.display = matches ? 'block' : 'none';
+                });
+            }
+
+            filterBooks(category) {
+                const cards = document.querySelectorAll('.book-card');
+                
+                cards.forEach(card => {
+                    if (category === 'all') {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = card.dataset.category === category ? 'block' : 'none';
+                    }
+                });
+            }
+
+            updateStats() {
+                document.getElementById('totalBooks').textContent = this.books.length;
+                document.getElementById('totalDownloads').textContent = this.downloadCount;
+                
+                const categories = [...new Set(this.books.map(book => book.category))];
+                document.getElementById('totalCategories').textContent = categories.length;
+            }
+
+            loadSampleBooks() {
+                if (this.books.length === 0) {
+                    const sampleBooks = [
+                        {
+                            id: 1,
+                            title: "El Quijote",
+                            author: "Miguel de Cervantes",
+                            category: "ficcion",
+                            description: "La obra maestra de la literatura española que narra las aventuras de Don Quijote de La Mancha.",
+                            fileData: "data:text/plain;base64,RWwgUXVpam90ZSBkZSBsYSBNYW5jaGE=",
+                            fileName: "el_quijote.pdf",
+                            fileType: "application/pdf",
+                            coverImage: null,
+                            uploadDate: "28/7/2025",
+                            downloads: 42
+                        },
+                        {
+                            id: 2,
+                            title: "Cien años de soledad",
+                            author: "Gabriel García Márquez",
+                            category: "ficcion",
+                            description: "Una obra maestra del realismo mágico que cuenta la historia de la familia Buendía.",
+                            fileData: "data:text/plain;base64,Q2llbiBhw7FvcyBkZSBzb2xlZGFk",
+                            fileName: "cien_anos_soledad.epub",
+                            fileType: "application/epub+zip",
+                            coverImage: null,
+                            uploadDate: "27/7/2025",
+                            downloads: 38
+                        }
+                    ];
+                    
+                    this.books = sampleBooks;
+                    this.saveBooks();
+                }
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('previewModal').style.display = 'none';
+        }
+
+        // Inicializar la biblioteca
+        const library = new VirtualLibrary();
+
+        // Cerrar modal al hacer clic fuera
+        window.onclick = function(event) {
+            const previewModal = document.getElementById('previewModal');
+            if (event.target === previewModal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
+
+                
